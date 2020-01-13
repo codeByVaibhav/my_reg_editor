@@ -152,7 +152,7 @@ def get_key_data(full_key_path):
     '''
     Generator functionn which yeilds name, value, type of a given key
     in the order.
-    key is full path ex: HKEY_CURRENT_CONFIG\System\CurrentControlSet\Control
+    full_key_path ex: 'HKEY_CURRENT_CONFIG\System\CurrentControlSet\Control' type str
     '''
     full_path_list = full_key_path.split('\\')
     root_key = string_to_raw_string(full_path_list[0])
