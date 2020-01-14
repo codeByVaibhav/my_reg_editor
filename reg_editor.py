@@ -3,11 +3,6 @@ import re
 from winreg import *
 import subprocess
 
-'''
-Get all the keys from registry HKCR
-"Get-ChildItem -Path Registry::HKCR -Recurse | Select-Object Name | Select -ExpandProperty Name"
-'''
-
 def pscommand(cmd, get_output=False):
     if get_output:
         # return subprocess.run(["powershell", cmd], subprocess.STDOUT, shell=True).decode('utf-8')
