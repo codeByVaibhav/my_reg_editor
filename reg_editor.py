@@ -69,6 +69,7 @@ def get_keys_list(keys_file):
         with open(keys_file, 'r', encoding='UTF-16 LE') as f:
             lines = f.readlines()
             lines = [i.encode(encoding='utf-8').decode(encoding='utf-8')[:-1] for i in lines]
+            # remove first character
             lines[0] = lines[0][1:]
             return lines
     except:
