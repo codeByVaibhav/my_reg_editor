@@ -1,2 +1,2 @@
 # my_reg_editor
-This is my windows registry editor.
+This is a windows registry editor.
