@@ -3,21 +3,26 @@ import re
 from winreg import *
 import subprocess
 
+
 def pscommand(cmd, get_output=False):
     if get_output:
         # return subprocess.run(["powershell", cmd], subprocess.STDOUT, shell=True).decode('utf-8')
-        output = subprocess.run(["powershell", cmd], capture_output=True, text=True).stdout
+        output = subprocess.run(["powershell", cmd],
+                                capture_output=True, text=True).stdout
         return output
 
     else:
         subprocess.Popen(["powershell", cmd], subprocess.PIPE)
 
+
 def string_to_raw_string(string):
-    rstring = "%r"%string
+    rstring = "%r" % string
     return rstring[1:-1]
+
 
 def get_regpath(regpath):
     return "Registry::" + regpath.split("::")[-1]
+
 
 def save_reg_keys(regpath, save_path=None):
     '''
@@ -28,7 +33,7 @@ def save_reg_keys(regpath, save_path=None):
     for HKEY_USERS use          HKU or HKEY_USERS
     for HKEY_CURRENT_CONFIG use HKCC or HKEY_CURRENT_CONFIG
     '''
-    saveFileName = regpath.replace("\\","_")
+    saveFileName = regpath.replace("\\", "_")
     saveFileName = saveFileName.split("::")[-1] + "_key.txt"
     if save_path is None:
         saveFileName = os.path.join(os.getcwd(), saveFileName)
@@ -41,8 +46,10 @@ def save_reg_keys(regpath, save_path=None):
         return saveFileName
     regpath = get_regpath(regpath)
     cmd = f"Get-ChildItem -Path {regpath} -Recurse | Select-Object Name | Select -ExpandProperty Name > '{saveFileName}'"
+    print(f"Getting all {regpath}. This will take quite some time.")
     pscommand(cmd)
     return saveFileName
+
 
 def save_and_get_all_reg_keys(save_path=None):
     '''
@@ -63,7 +70,8 @@ def get_keys_list(keys_file):
     try:
         with open(keys_file, 'r', encoding='UTF-16 LE') as f:
             lines = f.readlines()
-            lines = [i.encode(encoding='utf-8').decode(encoding='utf-8')[:-1] for i in lines]
+            lines = [i.encode(encoding='utf-8').decode(encoding='utf-8')[:-1]
+                     for i in lines]
             # remove first character
             lines[0] = lines[0][1:]
             return lines
@@ -87,7 +95,7 @@ def update_key_data(full_key_path, dtype, value_name, value):
         except:
             print(f'Cannot open Key: {full_key_path}')
             return
-        
+
         SetValueEx(key, value_name, 0, dtype, value)
         CloseKey(key)
         return
@@ -123,7 +131,7 @@ def update_key_data(full_key_path, dtype, value_name, value):
         except:
             print(f'Cannot open Key: {full_key_path}')
             return
-        
+
         SetValueEx(key, value_name, 0, dtype, value)
         CloseKey(key)
         return
@@ -135,7 +143,7 @@ def update_key_data(full_key_path, dtype, value_name, value):
         except:
             print(f'Cannot open Key: {full_key_path}')
             return
-        
+
         SetValueEx(key, value_name, 0, dtype, value)
         CloseKey(key)
         return
@@ -161,12 +169,12 @@ def get_key_data(full_key_path):
         except:
             return
 
-        i=0
+        i = 0
         while True:
             try:
-                n,v,t = EnumValue(key, i)
-                yield n,v,t
-                i+=1
+                n, v, t = EnumValue(key, i)
+                yield n, v, t
+                i += 1
             except WindowsError as e:
                 break
         CloseKey(key)
@@ -178,12 +186,12 @@ def get_key_data(full_key_path):
         except:
             return
 
-        i=0
+        i = 0
         while True:
             try:
-                n,v,t = EnumValue(key, i)
-                yield n,v,t
-                i+=1
+                n, v, t = EnumValue(key, i)
+                yield n, v, t
+                i += 1
             except WindowsError as e:
                 break
         CloseKey(key)
@@ -195,12 +203,12 @@ def get_key_data(full_key_path):
         except:
             return
 
-        i=0
+        i = 0
         while True:
             try:
-                n,v,t = EnumValue(key, i)
-                yield n,v,t
-                i+=1
+                n, v, t = EnumValue(key, i)
+                yield n, v, t
+                i += 1
             except WindowsError as e:
                 break
         CloseKey(key)
@@ -211,12 +219,12 @@ def get_key_data(full_key_path):
             key = OpenKey(HKEY_USERS, sub_key, 0, KEY_READ)
         except:
             return
-        i=0
+        i = 0
         while True:
             try:
-                n,v,t = EnumValue(key, i)
-                yield n,v,t
-                i+=1
+                n, v, t = EnumValue(key, i)
+                yield n, v, t
+                i += 1
             except WindowsError as e:
                 break
         CloseKey(key)
@@ -227,19 +235,20 @@ def get_key_data(full_key_path):
             key = OpenKey(HKEY_CURRENT_CONFIG, sub_key, 0, KEY_READ)
         except:
             return
-        
-        i=0
+
+        i = 0
         while True:
             try:
-                n,v,t = EnumValue(key, i)
-                yield n,v,t
-                i+=1
+                n, v, t = EnumValue(key, i)
+                yield n, v, t
+                i += 1
             except WindowsError as e:
                 break
         CloseKey(key)
 
     else:
         print(f"Path: {full_key_path} not found.")
+
 
 if __name__ == "__main__":
     pass
